@@ -12,6 +12,7 @@ import FloatingButtons from './components/layout/FloatingButtons';
 
 import Home from './pages/Home';
 import Services from './pages/Services';
+import Haulage from './pages/Haulage';
 import Towing from './pages/Towing';
 import Rental from './pages/Rental';
 import Sales from './pages/Sales';
@@ -344,6 +345,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/haulage" element={<Haulage />} />
             <Route path="/towing" element={<Towing />} />
             <Route path="/service-areas" element={<ServiceAreas />} />
             

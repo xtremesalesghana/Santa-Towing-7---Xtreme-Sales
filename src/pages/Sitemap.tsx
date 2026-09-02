@@ -1,1304 +1,653 @@
-import React, { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import SEO from '../components/seo/SEO';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
-import { Map } from 'lucide-react';
+import { 
+  Map, 
+  Search, 
+  Home, 
+  Truck, 
+  Package, 
+  Wrench, 
+  Car, 
+  Key, 
+  Battery, 
+  BookOpen, 
+  ShieldCheck, 
+  MapPin, 
+  Navigation,
+  FileCode,
+  ArrowUpRight,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  X,
+  Filter,
+  Layers,
+  LayoutGrid,
+  List,
+  CheckCircle2,
+  ExternalLink,
+  Hash
+} from 'lucide-react';
+import { SITEMAP_CATEGORIES, SitemapCategory, SitemapLink } from '../data/sitemapData';
 
-const sitemapData = [
-  {
-    "title": "Main Pages",
-    "links": [
-      {
-        "label": "404 – Page Not Found",
-        "path": "/404"
-      },
-      {
-        "label": "Careers",
-        "path": "/careers"
-      },
-      {
-        "label": "Gallery",
-        "path": "/gallery"
-      },
-      {
-        "label": "Home",
-        "path": "/"
-      },
-      {
-        "label": "Search",
-        "path": "/search"
-      },
-      {
-        "label": "Sitemap",
-        "path": "/sitemap"
-      }
-    ]
-  },
-  {
-    "title": "Towing Services",
-    "links": [
-      {
-        "label": "Book a Service",
-        "path": "/booking"
-      },
-      {
-        "label": "Towing Services Overview",
-        "path": "/towing"
-      }
-    ]
-  },
-  {
-    "title": "Other Services",
-    "links": [
-      {
-        "label": "All Services Overview",
-        "path": "/services"
-      },
-      {
-        "label": "Auto Body Works",
-        "path": "/body-works"
-      },
-      {
-        "label": "Auto Parts Catalog",
-        "path": "/parts"
-      },
-      {
-        "label": "Auto Repairs",
-        "path": "/repairs"
-      },
-      {
-        "label": "Car Rental",
-        "path": "/rental"
-      },
-      {
-        "label": "Fleet Services",
-        "path": "/fleet"
-      },
-      {
-        "label": "Vehicle Sales",
-        "path": "/sales"
-      }
-    ]
-  },
-  {
-    "title": "Legal & Policies",
-    "links": [
-      {
-        "label": "Accessibility Statement",
-        "path": "/accessibility-statement"
-      },
-      {
-        "label": "Cancellation & Refund Policy",
-        "path": "/cancellation-refund-policy"
-      },
-      {
-        "label": "Complaints Policy",
-        "path": "/complaints-policy"
-      },
-      {
-        "label": "Cookie Policy",
-        "path": "/cookie-policy"
-      },
-      {
-        "label": "Disclaimer",
-        "path": "/disclaimer"
-      },
-      {
-        "label": "Emergency Service Policy",
-        "path": "/emergency-service-policy"
-      },
-      {
-        "label": "Pricing & Payment Policy",
-        "path": "/pricing-payment-policy"
-      },
-      {
-        "label": "Privacy Policy",
-        "path": "/privacy-policy"
-      },
-      {
-        "label": "Service Area Policy",
-        "path": "/service-area-policy"
-      },
-      {
-        "label": "Terms & Conditions",
-        "path": "/terms-conditions"
-      },
-      {
-        "label": "Towing Service Terms",
-        "path": "/towing-service-terms"
-      },
-      {
-        "label": "Vehicle Damage & Liability Policy",
-        "path": "/vehicle-damage-liability-policy"
-      }
-    ]
-  },
-  {
-    "title": "Blog & Resources",
-    "links": [
-      {
-        "label": "Automotive Guides",
-        "path": "/blog?category=Automotive%20Guides"
-      },
-      {
-        "label": "Blog Overview",
-        "path": "/blog"
-      },
-      {
-        "label": "Company News",
-        "path": "/blog?category=Company%20News"
-      },
-      {
-        "label": "Contact Us",
-        "path": "/contact"
-      },
-      {
-        "label": "Emergency Assistance",
-        "path": "/blog?category=Emergency%20Assistance"
-      },
-      {
-        "label": "Frequently Asked Questions",
-        "path": "/faqs"
-      },
-      {
-        "label": "Roadside Safety",
-        "path": "/blog?category=Roadside%20Safety"
-      },
-      {
-        "label": "Towing Tips",
-        "path": "/blog?category=Towing%20Tips"
-      },
-      {
-        "label": "Vehicle Care",
-        "path": "/blog?category=Vehicle%20Care"
-      },
-      {
-        "label": "Vehicle Recovery",
-        "path": "/blog?category=Vehicle%20Recovery"
-      }
-    ]
-  },
-  {
-    "title": "Service Areas",
-    "links": [
-      {
-        "path": "/service-areas/abeka",
-        "label": "Abeka"
-      },
-      {
-        "path": "/service-areas/abuakwa-to-accra",
-        "label": "Abuakwa to Accra"
-      },
-      {
-        "path": "/service-areas/aburi-to-accra",
-        "label": "Aburi to Accra"
-      },
-      {
-        "path": "/service-areas/accra",
-        "label": "Accra"
-      },
-      {
-        "path": "/service-areas/accra-to-abuakwa",
-        "label": "Accra to Abuakwa"
-      },
-      {
-        "path": "/service-areas/accra-to-aburi",
-        "label": "Accra to Aburi"
-      },
-      {
-        "path": "/service-areas/accra-to-aflao",
-        "label": "Accra to Aflao"
-      },
-      {
-        "path": "/service-areas/accra-to-agona",
-        "label": "Accra to Agona"
-      },
-      {
-        "path": "/service-areas/accra-to-agona-nkwanta",
-        "label": "Accra to Agona Nkwanta"
-      },
-      {
-        "path": "/service-areas/accra-to-akontombra",
-        "label": "Accra to Akontombra"
-      },
-      {
-        "path": "/service-areas/accra-to-akropong",
-        "label": "Accra to Akropong"
-      },
-      {
-        "path": "/service-areas/accra-to-akwatia",
-        "label": "Accra to Akwatia"
-      },
-      {
-        "path": "/service-areas/accra-to-akyem-oda",
-        "label": "Accra to Akyem Oda"
-      },
-      {
-        "path": "/service-areas/accra-to-apam",
-        "label": "Accra to Apam"
-      },
-      {
-        "path": "/service-areas/accra-to-asamankese",
-        "label": "Accra to Asamankese"
-      },
-      {
-        "path": "/service-areas/accra-to-asankragwa",
-        "label": "Accra to Asankragwa"
-      },
-      {
-        "path": "/service-areas/accra-to-asante-akim",
-        "label": "Accra to Asante Akim"
-      },
-      {
-        "path": "/service-areas/accra-to-assin-fosu",
-        "label": "Accra to Assin Fosu"
-      },
-      {
-        "path": "/service-areas/accra-to-atebubu",
-        "label": "Accra to Atebubu"
-      },
-      {
-        "path": "/service-areas/accra-to-atonsu",
-        "label": "Accra to Atonsu"
-      },
-      {
-        "path": "/service-areas/accra-to-axim",
-        "label": "Accra to Axim"
-      },
-      {
-        "path": "/service-areas/accra-to-bawdie",
-        "label": "Accra to Bawdie"
-      },
-      {
-        "path": "/service-areas/accra-to-bawku",
-        "label": "Accra to Bawku"
-      },
-      {
-        "path": "/service-areas/accra-to-bechem",
-        "label": "Accra to Bechem"
-      },
-      {
-        "path": "/service-areas/accra-to-begoro",
-        "label": "Accra to Begoro"
-      },
-      {
-        "path": "/service-areas/accra-to-bekwai",
-        "label": "Accra to Bekwai"
-      },
-      {
-        "path": "/service-areas/accra-to-berekum",
-        "label": "Accra to Berekum"
-      },
-      {
-        "path": "/service-areas/accra-to-bibiani",
-        "label": "Accra to Bibiani"
-      },
-      {
-        "path": "/service-areas/accra-to-bodi",
-        "label": "Accra to Bodi"
-      },
-      {
-        "path": "/service-areas/accra-to-bogoso",
-        "label": "Accra to Bogoso"
-      },
-      {
-        "path": "/service-areas/accra-to-bole",
-        "label": "Accra to Bole"
-      },
-      {
-        "path": "/service-areas/accra-to-bolgatanga",
-        "label": "Accra to Bolgatanga"
-      },
-      {
-        "path": "/service-areas/accra-to-buipe",
-        "label": "Accra to Buipe"
-      },
-      {
-        "path": "/service-areas/accra-to-cape-coast",
-        "label": "Accra to Cape Coast"
-      },
-      {
-        "path": "/service-areas/accra-to-daboase",
-        "label": "Accra to Daboase"
-      },
-      {
-        "path": "/service-areas/accra-to-daboya",
-        "label": "Accra to Daboya"
-      },
-      {
-        "path": "/service-areas/accra-to-dadieso",
-        "label": "Accra to Dadieso"
-      },
-      {
-        "path": "/service-areas/accra-to-dambai",
-        "label": "Accra to Dambai"
-      },
-      {
-        "path": "/service-areas/accra-to-damongo",
-        "label": "Accra to Damongo"
-      },
-      {
-        "path": "/service-areas/accra-to-donkorkrom",
-        "label": "Accra to Donkorkrom"
-      },
-      {
-        "path": "/service-areas/accra-to-dormaa-ahenkro",
-        "label": "Accra to Dormaa Ahenkro"
-      },
-      {
-        "path": "/service-areas/accra-to-duayaw-nkwanta",
-        "label": "Accra to Duayaw Nkwanta"
-      },
-      {
-        "path": "/service-areas/accra-to-dunkwa-on-offin",
-        "label": "Accra to Dunkwa-on-Offin"
-      },
-      {
-        "path": "/service-areas/accra-to-ejisu",
-        "label": "Accra to Ejisu"
-      },
-      {
-        "path": "/service-areas/accra-to-elmina",
-        "label": "Accra to Elmina"
-      },
-      {
-        "path": "/service-areas/accra-to-elubo",
-        "label": "Accra to Elubo"
-      },
-      {
-        "path": "/service-areas/accra-to-enchi",
-        "label": "Accra to Enchi"
-      },
-      {
-        "path": "/service-areas/accra-to-fomena",
-        "label": "Accra to Fomena"
-      },
-      {
-        "path": "/service-areas/accra-to-fumbisi",
-        "label": "Accra to Fumbisi"
-      },
-      {
-        "path": "/service-areas/accra-to-gambaga",
-        "label": "Accra to Gambaga"
-      },
-      {
-        "path": "/service-areas/accra-to-goaso",
-        "label": "Accra to Goaso"
-      },
-      {
-        "path": "/service-areas/accra-to-half-assini",
-        "label": "Accra to Half Assini"
-      },
-      {
-        "path": "/service-areas/accra-to-hamile",
-        "label": "Accra to Hamile"
-      },
-      {
-        "path": "/service-areas/accra-to-ho",
-        "label": "Accra to Ho"
-      },
-      {
-        "path": "/service-areas/accra-to-hohoe",
-        "label": "Accra to Hohoe"
-      },
-      {
-        "path": "/service-areas/accra-to-hwidiem",
-        "label": "Accra to Hwidiem"
-      },
-      {
-        "path": "/service-areas/accra-to-jasikan",
-        "label": "Accra to Jasikan"
-      },
-      {
-        "path": "/service-areas/accra-to-jirapa",
-        "label": "Accra to Jirapa"
-      },
-      {
-        "path": "/service-areas/accra-to-juaben",
-        "label": "Accra to Juaben"
-      },
-      {
-        "path": "/service-areas/accra-to-juaboso",
-        "label": "Accra to Juaboso"
-      },
-      {
-        "path": "/service-areas/accra-to-kadjebi",
-        "label": "Accra to Kadjebi"
-      },
-      {
-        "path": "/service-areas/accra-to-karaga",
-        "label": "Accra to Karaga"
-      },
-      {
-        "path": "/service-areas/accra-to-kenyasi",
-        "label": "Accra to Kenyasi"
-      },
-      {
-        "path": "/service-areas/accra-to-keta",
-        "label": "Accra to Keta"
-      },
-      {
-        "path": "/service-areas/accra-to-kete-krachi",
-        "label": "Accra to Kete Krachi"
-      },
-      {
-        "path": "/service-areas/accra-to-kintampo",
-        "label": "Accra to Kintampo"
-      },
-      {
-        "path": "/service-areas/accra-to-koforidua",
-        "label": "Accra to Koforidua"
-      },
-      {
-        "path": "/service-areas/accra-to-konongo",
-        "label": "Accra to Konongo"
-      },
-      {
-        "path": "/service-areas/accra-to-kumasi",
-        "label": "Accra to Kumasi"
-      },
-      {
-        "path": "/service-areas/accra-to-kwame-danso",
-        "label": "Accra to Kwame Danso"
-      },
-      {
-        "path": "/service-areas/accra-to-lawra",
-        "label": "Accra to Lawra"
-      },
-      {
-        "path": "/service-areas/accra-to-mampong",
-        "label": "Accra to Mampong"
-      },
-      {
-        "path": "/service-areas/accra-to-mankessim",
-        "label": "Accra to Mankessim"
-      },
-      {
-        "path": "/service-areas/accra-to-mim",
-        "label": "Accra to Mim"
-      },
-      {
-        "path": "/service-areas/accra-to-mpohor",
-        "label": "Accra to Mpohor"
-      },
-      {
-        "path": "/service-areas/accra-to-nalerigu",
-        "label": "Accra to Nalerigu"
-      },
-      {
-        "path": "/service-areas/accra-to-nandom",
-        "label": "Accra to Nandom"
-      },
-      {
-        "path": "/service-areas/accra-to-navrongo",
-        "label": "Accra to Navrongo"
-      },
-      {
-        "path": "/service-areas/accra-to-nkawie",
-        "label": "Accra to Nkawie"
-      },
-      {
-        "path": "/service-areas/accra-to-nkawkaw",
-        "label": "Accra to Nkawkaw"
-      },
-      {
-        "path": "/service-areas/accra-to-nkoranza",
-        "label": "Accra to Nkoranza"
-      },
-      {
-        "path": "/service-areas/accra-to-nkwanta",
-        "label": "Accra to Nkwanta"
-      },
-      {
-        "path": "/service-areas/accra-to-nkwanta-south",
-        "label": "Accra to Nkwanta South"
-      },
-      {
-        "path": "/service-areas/accra-to-nsawam",
-        "label": "Accra to Nsawam"
-      },
-      {
-        "path": "/service-areas/accra-to-obuasi",
-        "label": "Accra to Obuasi"
-      },
-      {
-        "path": "/service-areas/accra-to-odumase-krobo",
-        "label": "Accra to Odumase-Krobo"
-      },
-      {
-        "path": "/service-areas/accra-to-offinso",
-        "label": "Accra to Offinso"
-      },
-      {
-        "path": "/service-areas/accra-to-paga",
-        "label": "Accra to Paga"
-      },
-      {
-        "path": "/service-areas/accra-to-prang",
-        "label": "Accra to Prang"
-      },
-      {
-        "path": "/service-areas/accra-to-prestea",
-        "label": "Accra to Prestea"
-      },
-      {
-        "path": "/service-areas/accra-to-salaga",
-        "label": "Accra to Salaga"
-      },
-      {
-        "path": "/service-areas/accra-to-samreboi",
-        "label": "Accra to Samreboi"
-      },
-      {
-        "path": "/service-areas/accra-to-sandema",
-        "label": "Accra to Sandema"
-      },
-      {
-        "path": "/service-areas/accra-to-savelugu",
-        "label": "Accra to Savelugu"
-      },
-      {
-        "path": "/service-areas/accra-to-sefwi-bekwai",
-        "label": "Accra to Sefwi Bekwai"
-      },
-      {
-        "path": "/service-areas/accra-to-sefwi-wiawso",
-        "label": "Accra to Sefwi Wiawso"
-      },
-      {
-        "path": "/service-areas/accra-to-sekondi",
-        "label": "Accra to Sekondi"
-      },
-      {
-        "path": "/service-areas/accra-to-shama",
-        "label": "Accra to Shama"
-      },
-      {
-        "path": "/service-areas/accra-to-sogakope",
-        "label": "Accra to Sogakope"
-      },
-      {
-        "path": "/service-areas/accra-to-somanya",
-        "label": "Accra to Somanya"
-      },
-      {
-        "path": "/service-areas/accra-to-suhum",
-        "label": "Accra to Suhum"
-      },
-      {
-        "path": "/service-areas/accra-to-sunyani",
-        "label": "Accra to Sunyani"
-      },
-      {
-        "path": "/service-areas/accra-to-takoradi",
-        "label": "Accra to Takoradi"
-      },
-      {
-        "path": "/service-areas/accra-to-tamale",
-        "label": "Accra to Tamale"
-      },
-      {
-        "path": "/service-areas/accra-to-tarkwa",
-        "label": "Accra to Tarkwa"
-      },
-      {
-        "path": "/service-areas/accra-to-techiman",
-        "label": "Accra to Techiman"
-      },
-      {
-        "path": "/service-areas/accra-to-tepa",
-        "label": "Accra to Tepa"
-      },
-      {
-        "path": "/service-areas/accra-to-tolon",
-        "label": "Accra to Tolon"
-      },
-      {
-        "path": "/service-areas/accra-to-tumu",
-        "label": "Accra to Tumu"
-      },
-      {
-        "path": "/service-areas/accra-to-wa",
-        "label": "Accra to Wa"
-      },
-      {
-        "path": "/service-areas/accra-to-walewale",
-        "label": "Accra to Walewale"
-      },
-      {
-        "path": "/service-areas/accra-to-wassa-akropong",
-        "label": "Accra to Wassa Akropong"
-      },
-      {
-        "path": "/service-areas/accra-to-wenchi",
-        "label": "Accra to Wenchi"
-      },
-      {
-        "path": "/service-areas/accra-to-winneba",
-        "label": "Accra to Winneba"
-      },
-      {
-        "path": "/service-areas/accra-to-yeji",
-        "label": "Accra to Yeji"
-      },
-      {
-        "path": "/service-areas/accra-to-yendi",
-        "label": "Accra to Yendi"
-      },
-      {
-        "path": "/service-areas/accra-to-zebilla",
-        "label": "Accra to Zebilla"
-      },
-      {
-        "path": "/service-areas/achimota",
-        "label": "Achimota"
-      },
-      {
-        "path": "/service-areas/adenta",
-        "label": "Adenta"
-      },
-      {
-        "path": "/service-areas/aflao-to-accra",
-        "label": "Aflao to Accra"
-      },
-      {
-        "path": "/service-areas/agona-nkwanta-to-accra",
-        "label": "Agona Nkwanta to Accra"
-      },
-      {
-        "path": "/service-areas/agona-to-accra",
-        "label": "Agona to Accra"
-      },
-      {
-        "path": "/service-areas/airport-residential",
-        "label": "Airport Residential"
-      },
-      {
-        "path": "/service-areas/akontombra-to-accra",
-        "label": "Akontombra to Accra"
-      },
-      {
-        "path": "/service-areas/akropong-to-accra",
-        "label": "Akropong to Accra"
-      },
-      {
-        "path": "/service-areas/akwatia-to-accra",
-        "label": "Akwatia to Accra"
-      },
-      {
-        "path": "/service-areas/akyem-oda-to-accra",
-        "label": "Akyem Oda to Accra"
-      },
-      {
-        "path": "/service-areas/amasaman",
-        "label": "Amasaman"
-      },
-      {
-        "path": "/service-areas/apam-to-accra",
-        "label": "Apam to Accra"
-      },
-      {
-        "path": "/service-areas/asamankese-to-accra",
-        "label": "Asamankese to Accra"
-      },
-      {
-        "path": "/service-areas/asankragwa-to-accra",
-        "label": "Asankragwa to Accra"
-      },
-      {
-        "path": "/service-areas/asante-akim-to-accra",
-        "label": "Asante Akim to Accra"
-      },
-      {
-        "path": "/service-areas/ashaiman",
-        "label": "Ashaiman"
-      },
-      {
-        "path": "/service-areas/assin-fosu-to-accra",
-        "label": "Assin Fosu to Accra"
-      },
-      {
-        "path": "/service-areas/atebubu-to-accra",
-        "label": "Atebubu to Accra"
-      },
-      {
-        "path": "/service-areas/atonsu-to-accra",
-        "label": "Atonsu to Accra"
-      },
-      {
-        "path": "/service-areas/axim-to-accra",
-        "label": "Axim to Accra"
-      },
-      {
-        "path": "/service-areas/ayawaso",
-        "label": "Ayawaso"
-      },
-      {
-        "path": "/service-areas/bawdie-to-accra",
-        "label": "Bawdie to Accra"
-      },
-      {
-        "path": "/service-areas/bawku-to-accra",
-        "label": "Bawku to Accra"
-      },
-      {
-        "path": "/service-areas/bechem-to-accra",
-        "label": "Bechem to Accra"
-      },
-      {
-        "path": "/service-areas/begoro-to-accra",
-        "label": "Begoro to Accra"
-      },
-      {
-        "path": "/service-areas/bekwai-to-accra",
-        "label": "Bekwai to Accra"
-      },
-      {
-        "path": "/service-areas/berekum-to-accra",
-        "label": "Berekum to Accra"
-      },
-      {
-        "path": "/service-areas/bibiani-to-accra",
-        "label": "Bibiani to Accra"
-      },
-      {
-        "path": "/service-areas/bodi-to-accra",
-        "label": "Bodi to Accra"
-      },
-      {
-        "path": "/service-areas/bogoso-to-accra",
-        "label": "Bogoso to Accra"
-      },
-      {
-        "path": "/service-areas/bolgatanga-to-accra",
-        "label": "Bolgatanga to Accra"
-      },
-      {
-        "path": "/service-areas/buipe-to-accra",
-        "label": "Buipe to Accra"
-      },
-      {
-        "path": "/service-areas/burma-camp",
-        "label": "Burma Camp"
-      },
-      {
-        "path": "/service-areas/cape-coast-to-accra",
-        "label": "Cape Coast to Accra"
-      },
-      {
-        "path": "/service-areas/circle",
-        "label": "Circle"
-      },
-      {
-        "path": "/service-areas/daboase-to-accra",
-        "label": "Daboase to Accra"
-      },
-      {
-        "path": "/service-areas/daboya-to-accra",
-        "label": "Daboya to Accra"
-      },
-      {
-        "path": "/service-areas/dadieso-to-accra",
-        "label": "Dadieso to Accra"
-      },
-      {
-        "path": "/service-areas/dambai-to-accra",
-        "label": "Dambai to Accra"
-      },
-      {
-        "path": "/service-areas/damongo-to-accra",
-        "label": "Damongo to Accra"
-      },
-      {
-        "path": "/service-areas/dansoman",
-        "label": "Dansoman"
-      },
-      {
-        "path": "/service-areas/dawhenya",
-        "label": "Dawhenya"
-      },
-      {
-        "path": "/service-areas/dodowa",
-        "label": "Dodowa"
-      },
-      {
-        "path": "/service-areas/donkorkrom-to-accra",
-        "label": "Donkorkrom to Accra"
-      },
-      {
-        "path": "/service-areas/dormaa-ahenkro-to-accra",
-        "label": "Dormaa Ahenkro to Accra"
-      },
-      {
-        "path": "/service-areas/duayaw-nkwanta-to-accra",
-        "label": "Duayaw Nkwanta to Accra"
-      },
-      {
-        "path": "/service-areas/dunkwa-on-offin-to-accra",
-        "label": "Dunkwa-on-Offin to Accra"
-      },
-      {
-        "path": "/service-areas/dzorwulu",
-        "label": "Dzorwulu"
-      },
-      {
-        "path": "/service-areas/east-legon",
-        "label": "East Legon"
-      },
-      {
-        "path": "/service-areas/ejisu-to-accra",
-        "label": "Ejisu to Accra"
-      },
-      {
-        "path": "/service-areas/elmina-to-accra",
-        "label": "Elmina to Accra"
-      },
-      {
-        "path": "/service-areas/elubo-to-accra",
-        "label": "Elubo to Accra"
-      },
-      {
-        "path": "/service-areas/enchi-to-accra",
-        "label": "Enchi to Accra"
-      },
-      {
-        "path": "/service-areas/fomena-to-accra",
-        "label": "Fomena to Accra"
-      },
-      {
-        "path": "/service-areas/fumbisi-to-accra",
-        "label": "Fumbisi to Accra"
-      },
-      {
-        "path": "/service-areas/gambaga-to-accra",
-        "label": "Gambaga to Accra"
-      },
-      {
-        "path": "/service-areas/goaso-to-accra",
-        "label": "Goaso to Accra"
-      },
-      {
-        "path": "/service-areas/gushegu-to-accra",
-        "label": "Gushegu to Accra"
-      },
-      {
-        "path": "/service-areas/half-assini-to-accra",
-        "label": "Half Assini to Accra"
-      },
-      {
-        "path": "/service-areas/hamile-to-accra",
-        "label": "Hamile to Accra"
-      },
-      {
-        "path": "/service-areas/ho-to-accra",
-        "label": "Ho to Accra"
-      },
-      {
-        "path": "/service-areas/hohoe-to-accra",
-        "label": "Hohoe to Accra"
-      },
-      {
-        "path": "/service-areas/hwidiem-to-accra",
-        "label": "Hwidiem to Accra"
-      },
-      {
-        "path": "/service-areas/jasikan-to-accra",
-        "label": "Jasikan to Accra"
-      },
-      {
-        "path": "/service-areas/jirapa-to-accra",
-        "label": "Jirapa to Accra"
-      },
-      {
-        "path": "/service-areas/juaben-to-accra",
-        "label": "Juaben to Accra"
-      },
-      {
-        "path": "/service-areas/juaboso-to-accra",
-        "label": "Juaboso to Accra"
-      },
-      {
-        "path": "/service-areas/kadjebi-to-accra",
-        "label": "Kadjebi to Accra"
-      },
-      {
-        "path": "/service-areas/kaneshie",
-        "label": "Kaneshie"
-      },
-      {
-        "path": "/service-areas/karaga-to-accra",
-        "label": "Karaga to Accra"
-      },
-      {
-        "path": "/service-areas/kasoa",
-        "label": "Kasoa"
-      },
-      {
-        "path": "/service-areas/kenyasi-to-accra",
-        "label": "Kenyasi to Accra"
-      },
-      {
-        "path": "/service-areas/keta-to-accra",
-        "label": "Keta to Accra"
-      },
-      {
-        "path": "/service-areas/kete-krachi-to-accra",
-        "label": "Kete Krachi to Accra"
-      },
-      {
-        "path": "/service-areas/kintampo-to-accra",
-        "label": "Kintampo to Accra"
-      },
-      {
-        "path": "/service-areas/koforidua-to-accra",
-        "label": "Koforidua to Accra"
-      },
-      {
-        "path": "/service-areas/konongo-to-accra",
-        "label": "Konongo to Accra"
-      },
-      {
-        "path": "/service-areas/korle-klottey",
-        "label": "Korle Klottey"
-      },
-      {
-        "path": "/service-areas/kpone",
-        "label": "Kpone"
-      },
-      {
-        "path": "/service-areas/kumasi-to-accra",
-        "label": "Kumasi to Accra"
-      },
-      {
-        "path": "/service-areas/kwame-danso-to-accra",
-        "label": "Kwame Danso to Accra"
-      },
-      {
-        "path": "/service-areas/kwashieman",
-        "label": "Kwashieman"
-      },
-      {
-        "path": "/service-areas/la",
-        "label": "La"
-      },
-      {
-        "path": "/service-areas/labadi",
-        "label": "Labadi"
-      },
-      {
-        "path": "/service-areas/lakeside",
-        "label": "Lakeside"
-      },
-      {
-        "path": "/service-areas/lawra-to-accra",
-        "label": "Lawra to Accra"
-      },
-      {
-        "path": "/service-areas/madina",
-        "label": "Madina"
-      },
-      {
-        "path": "/service-areas/mampong-to-accra",
-        "label": "Mampong to Accra"
-      },
-      {
-        "path": "/service-areas/mankessim-to-accra",
-        "label": "Mankessim to Accra"
-      },
-      {
-        "path": "/service-areas/mim-to-accra",
-        "label": "Mim to Accra"
-      },
-      {
-        "path": "/service-areas/mpohor-to-accra",
-        "label": "Mpohor to Accra"
-      },
-      {
-        "path": "/service-areas/nalerigu-to-accra",
-        "label": "Nalerigu to Accra"
-      },
-      {
-        "path": "/service-areas/nandom-to-accra",
-        "label": "Nandom to Accra"
-      },
-      {
-        "path": "/service-areas/navrongo-to-accra",
-        "label": "Navrongo to Accra"
-      },
-      {
-        "path": "/service-areas/nima",
-        "label": "Nima"
-      },
-      {
-        "path": "/service-areas/ningo-prampram",
-        "label": "Ningo-Prampram"
-      },
-      {
-        "path": "/service-areas/nkawie-to-accra",
-        "label": "Nkawie to Accra"
-      },
-      {
-        "path": "/service-areas/nkawkaw-to-accra",
-        "label": "Nkawkaw to Accra"
-      },
-      {
-        "path": "/service-areas/nkoranza-to-accra",
-        "label": "Nkoranza to Accra"
-      },
-      {
-        "path": "/service-areas/nkwanta-south-to-accra",
-        "label": "Nkwanta South to Accra"
-      },
-      {
-        "path": "/service-areas/nkwanta-to-accra",
-        "label": "Nkwanta to Accra"
-      },
-      {
-        "path": "/service-areas/nsawam-to-accra",
-        "label": "Nsawam to Accra"
-      },
-      {
-        "path": "/service-areas/nungua",
-        "label": "Nungua"
-      },
-      {
-        "path": "/service-areas/obuasi-to-accra",
-        "label": "Obuasi to Accra"
-      },
-      {
-        "path": "/service-areas/odumase-krobo-to-accra",
-        "label": "Odumase-Krobo to Accra"
-      },
-      {
-        "path": "/service-areas/offinso-to-accra",
-        "label": "Offinso to Accra"
-      },
-      {
-        "path": "/service-areas/osu",
-        "label": "Osu"
-      },
-      {
-        "path": "/service-areas/paga-to-accra",
-        "label": "Paga to Accra"
-      },
-      {
-        "path": "/service-areas/pokuase",
-        "label": "Pokuase"
-      },
-      {
-        "path": "/service-areas/prampram",
-        "label": "Prampram"
-      },
-      {
-        "path": "/service-areas/prang-to-accra",
-        "label": "Prang to Accra"
-      },
-      {
-        "path": "/service-areas/prestea-to-accra",
-        "label": "Prestea to Accra"
-      },
-      {
-        "path": "/service-areas/salaga-to-accra",
-        "label": "Salaga to Accra"
-      },
-      {
-        "path": "/service-areas/samreboi-to-accra",
-        "label": "Samreboi to Accra"
-      },
-      {
-        "path": "/service-areas/sandema-to-accra",
-        "label": "Sandema to Accra"
-      },
-      {
-        "path": "/service-areas/savelugu-to-accra",
-        "label": "Savelugu to Accra"
-      },
-      {
-        "path": "/service-areas/sefwi-bekwai-to-accra",
-        "label": "Sefwi Bekwai to Accra"
-      },
-      {
-        "path": "/service-areas/sefwi-wiawso-to-accra",
-        "label": "Sefwi Wiawso to Accra"
-      },
-      {
-        "path": "/service-areas/sekondi-to-accra",
-        "label": "Sekondi to Accra"
-      },
-      {
-        "path": "/service-areas/shama-to-accra",
-        "label": "Shama to Accra"
-      },
-      {
-        "path": "/service-areas/sogakope-to-accra",
-        "label": "Sogakope to Accra"
-      },
-      {
-        "path": "/service-areas/somanya-to-accra",
-        "label": "Somanya to Accra"
-      },
-      {
-        "path": "/service-areas/spintex",
-        "label": "Spintex"
-      },
-      {
-        "path": "/service-areas/suhum-to-accra",
-        "label": "Suhum to Accra"
-      },
-      {
-        "path": "/service-areas/sunyani-to-accra",
-        "label": "Sunyani to Accra"
-      },
-      {
-        "path": "/service-areas/takoradi-to-accra",
-        "label": "Takoradi to Accra"
-      },
-      {
-        "path": "/service-areas/tamale-to-accra",
-        "label": "Tamale to Accra"
-      },
-      {
-        "path": "/service-areas/tarkwa-to-accra",
-        "label": "Tarkwa to Accra"
-      },
-      {
-        "path": "/service-areas/techiman-to-accra",
-        "label": "Techiman to Accra"
-      },
-      {
-        "path": "/service-areas/tema",
-        "label": "Tema"
-      },
-      {
-        "path": "/service-areas/tepa-to-accra",
-        "label": "Tepa to Accra"
-      },
-      {
-        "path": "/service-areas/tesano",
-        "label": "Tesano"
-      },
-      {
-        "path": "/service-areas/teshie",
-        "label": "Teshie"
-      },
-      {
-        "path": "/service-areas/tolon-to-accra",
-        "label": "Tolon to Accra"
-      },
-      {
-        "path": "/service-areas/tumu-to-accra",
-        "label": "Tumu to Accra"
-      },
-      {
-        "path": "/service-areas/wa-to-accra",
-        "label": "Wa to Accra"
-      },
-      {
-        "path": "/service-areas/walewale-to-accra",
-        "label": "Walewale to Accra"
-      },
-      {
-        "path": "/service-areas/wassa-akropong-to-accra",
-        "label": "Wassa Akropong to Accra"
-      },
-      {
-        "path": "/service-areas/weija-gbawe",
-        "label": "Weija-Gbawe"
-      },
-      {
-        "path": "/service-areas/wenchi-to-accra",
-        "label": "Wenchi to Accra"
-      },
-      {
-        "path": "/service-areas/winneba-to-accra",
-        "label": "Winneba to Accra"
-      },
-      {
-        "path": "/service-areas/yeji-to-accra",
-        "label": "Yeji to Accra"
-      },
-      {
-        "path": "/service-areas/yendi-to-accra",
-        "label": "Yendi to Accra"
-      },
-      {
-        "path": "/service-areas/zebilla-to-accra",
-        "label": "Zebilla to Accra"
-      }
-    ]
-  }
-];
+const ICON_MAP: Record<string, React.ElementType> = {
+  Home,
+  Truck,
+  Container: Package,
+  Wrench,
+  Car,
+  Key,
+  Battery,
+  BookOpen,
+  ShieldCheck,
+  MapPin,
+  Navigation
+};
 
 export default function Sitemap() {
-  const { hash } = useLocation();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    main: true,
+    towing: true,
+    haulage: true,
+    services: true,
+    sales: true,
+    rental: true,
+    parts: true,
+    blog: true,
+    legal: true,
+    'local-areas': true,
+    corridors: true
+  });
 
-  useEffect(() => {
-    if (hash) {
-      const element = document.querySelector(hash);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+  // Calculate global start & end indices for each category in the static sitemap hierarchy
+  const categoryRanges = useMemo(() => {
+    const ranges: Record<string, { start: number; end: number; count: number; code: string; number: number }> = {};
+    let currentCount = 0;
+
+    SITEMAP_CATEGORIES.forEach(cat => {
+      const start = currentCount + 1;
+      const count = cat.links.length;
+      const end = currentCount + count;
+      currentCount = end;
+
+      ranges[cat.id] = {
+        start,
+        end,
+        count,
+        code: cat.code,
+        number: cat.categoryNumber
+      };
+    });
+
+    return ranges;
+  }, []);
+
+  const totalLinksCount = useMemo(() => {
+    return SITEMAP_CATEGORIES.reduce((acc, cat) => acc + cat.links.length, 0);
+  }, []);
+
+  // Pre-calculate global sequential number and hierarchical ID for every link in SITEMAP_CATEGORIES
+  const enrichedCategories = useMemo(() => {
+    let globalCounter = 0;
+
+    return SITEMAP_CATEGORIES.map(cat => {
+      const enrichedLinks = cat.links.map((link, linkIdx) => {
+        globalCounter++;
+        return {
+          ...link,
+          globalNumber: globalCounter,
+          hierarchicalId: `${cat.code}.${linkIdx + 1}`,
+          categoryCode: cat.code,
+          categoryNumber: cat.categoryNumber,
+          categoryTitle: cat.title,
+          categoryIndex: linkIdx + 1
+        };
+      });
+
+      return {
+        ...cat,
+        enrichedLinks
+      };
+    });
+  }, []);
+
+  // Filtered categories based on search query and category filter
+  const filteredCategories = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+
+    return enrichedCategories.map(cat => {
+      // Category filter check
+      if (selectedCategory !== 'all' && cat.id !== selectedCategory) {
+        return null;
       }
-    } else {
-      window.scrollTo(0, 0);
-    }
-  }, [hash]);
 
-  let globalCounter = 1;
-  const getNextNumber = () => String(globalCounter++).padStart(3, '0');
+      if (!q) {
+        return cat;
+      }
+
+      // Filter links within category
+      const matchedLinks = cat.enrichedLinks.filter(link => 
+        link.label.toLowerCase().includes(q) || 
+        link.path.toLowerCase().includes(q) ||
+        link.hierarchicalId.toLowerCase().includes(q) ||
+        String(link.globalNumber) === q ||
+        `#${link.globalNumber}` === q ||
+        (link.desc && link.desc.toLowerCase().includes(q))
+      );
+
+      // If category title matches query, return all links or matched links
+      const catTitleMatch = cat.title.toLowerCase().includes(q) || 
+                            cat.description.toLowerCase().includes(q) ||
+                            `category ${cat.code.toLowerCase()}`.includes(q);
+
+      if (matchedLinks.length > 0) {
+        return {
+          ...cat,
+          enrichedLinks: matchedLinks
+        };
+      }
+
+      if (catTitleMatch) {
+        return cat;
+      }
+
+      return null;
+    }).filter((cat): cat is (typeof enrichedCategories)[0] => cat !== null);
+  }, [searchQuery, selectedCategory, enrichedCategories]);
+
+  const totalMatchedLinks = useMemo(() => {
+    return filteredCategories.reduce((acc, cat) => acc + cat.enrichedLinks.length, 0);
+  }, [filteredCategories]);
+
+  const toggleSection = (id: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const expandAll = () => {
+    const all: Record<string, boolean> = {};
+    SITEMAP_CATEGORIES.forEach(c => { all[c.id] = true; });
+    setExpandedSections(all);
+  };
+
+  const collapseAll = () => {
+    const none: Record<string, boolean> = {};
+    SITEMAP_CATEGORIES.forEach(c => { none[c.id] = false; });
+    setExpandedSections(none);
+  };
+
+  const scrollToCategory = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
-    <div className="pt-24 pb-16 md:pb-20 bg-slate-50 min-h-screen">
+    <main className="min-h-screen bg-slate-50 pt-24 pb-20">
       <SEO 
-        title="Website Sitemap | Santa Towing" 
-        description="Navigate our website easily with our complete sitemap directory for towing, repairs, rentals, and service areas." 
+        title="Numbered Website Sitemap & Directory | Santa Towing Ghana" 
+        description="Comprehensive, numbered website directory of Santa Towing Ghana. Access all 338 indexed pages across 11 structured categories from emergency towing and heavy haulage to nationwide transit corridors." 
         canonical="/sitemap" 
       />
-      
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="mb-12">
-          <Breadcrumbs items={[{ label: 'Sitemap' }]} />
+        {/* Breadcrumbs */}
+        <div className="mb-6">
+          <Breadcrumbs items={[{ label: 'Website Sitemap' }]} />
+        </div>
+
+        {/* Hero Header Section */}
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm mb-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl -z-0 pointer-events-none" />
           
-          <div className="mt-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Map className="w-6 h-6 text-primary" />
+          <div className="relative z-10">
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-accent/10 text-accent">
+                <Sparkles className="w-3.5 h-3.5" />
+                Numbered Website Hierarchy
+              </span>
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900 text-white">
+                <Hash className="w-3 h-3 text-accent" />
+                {totalLinksCount} Sequentially Numbered Pages
+              </span>
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                <Layers className="w-3.5 h-3.5 text-slate-500" />
+                11 Categories (A – K)
+              </span>
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                100% Active Routes
+              </span>
             </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-dark mb-1">Website Sitemap</h1>
-              <p className="text-lg text-dark/70">
-                A complete directory of all pages on our website.
+
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="max-w-3xl">
+                <div className="flex items-center gap-3.5 mb-2">
+                  <div className="w-12 h-12 rounded-2xl bg-accent text-white flex items-center justify-center shrink-0 shadow-md shadow-accent/20">
+                    <Map className="w-6 h-6" />
+                  </div>
+                  <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Website Sitemap
+                  </h1>
+                </div>
+                <p className="text-slate-600 text-base sm:text-lg leading-relaxed mt-2">
+                  Explore every publicly accessible page on Santa Towing. Each category is labeled alphabetically (<strong>Category A – K</strong>) and sequentially numbered (<strong>Page #1 to #{totalLinksCount}</strong>) for transparent indexing and easy navigation.
+                </p>
+              </div>
+
+              {/* Action Buttons & XML Sitemap */}
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0">
+                <a 
+                  href="/sitemap.xml" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-accent transition-colors shadow-sm"
+                  title="Open Search Engine XML Sitemap"
+                >
+                  <FileCode className="w-4 h-4 text-accent" />
+                  <span>XML Sitemap</span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+                </a>
+
+                <Link
+                  to="/booking"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm shadow-accent/20"
+                >
+                  <Truck className="w-4 h-4" />
+                  <span>Book Service</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Category Quick Index Overview Bar */}
+            <div className="mt-8 pt-6 border-t border-slate-100">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                Quick Category Directory (A – K):
               </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 text-xs">
+                {SITEMAP_CATEGORIES.map(cat => {
+                  const range = categoryRanges[cat.id];
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => scrollToCategory(cat.id)}
+                      className="p-2 rounded-xl bg-slate-50 hover:bg-accent/10 hover:border-accent/30 border border-slate-200/80 text-left transition-all group"
+                    >
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span className="font-mono font-bold text-accent group-hover:text-accent text-[11px]">
+                          Category {cat.code}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          #{range.start}–#{range.end}
+                        </span>
+                      </div>
+                      <div className="font-semibold text-slate-800 text-[12px] truncate group-hover:text-slate-900">
+                        {cat.title.split('&')[0].trim()}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Interactive Search Bar & View Mode Controls */}
+            <div className="mt-6 pt-6 border-t border-slate-100 flex flex-col md:flex-row items-center gap-4">
+              <div className="relative w-full md:flex-1">
+                <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by page name, category code (e.g. A.1, K.50), page # (e.g. #24), or keyword..."
+                  className="w-full pl-11 pr-10 py-3 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                    aria-label="Clear search"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* View Mode & Expand Controls */}
+              <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+                {/* View Mode Toggle */}
+                <div className="inline-flex rounded-xl border border-slate-200 bg-slate-100 p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      viewMode === 'grid'
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                    title="Grid Card View"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Grid View</span>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('table')}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      viewMode === 'table'
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                    title="Compact Table / List View"
+                  >
+                    <List className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Table View</span>
+                  </button>
+                </div>
+
+                <button
+                  onClick={expandAll}
+                  className="text-xs font-semibold text-slate-600 hover:text-accent px-3 py-2 bg-slate-100 hover:bg-slate-200/70 rounded-lg transition-colors"
+                >
+                  Expand All
+                </button>
+                <button
+                  onClick={collapseAll}
+                  className="text-xs font-semibold text-slate-600 hover:text-accent px-3 py-2 bg-slate-100 hover:bg-slate-200/70 rounded-lg transition-colors"
+                >
+                  Collapse All
+                </button>
+              </div>
+            </div>
+
+            {/* Category Quick Filter Pills */}
+            <div className="mt-5 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs">
+              <span className="flex items-center gap-1 font-bold text-slate-500 uppercase tracking-wider text-[11px] shrink-0 mr-1">
+                <Filter className="w-3.5 h-3.5" />
+                Filter:
+              </span>
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className={`px-3.5 py-1.5 rounded-full font-semibold shrink-0 transition-all ${
+                  selectedCategory === 'all'
+                    ? 'bg-slate-900 text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
+                }`}
+              >
+                All Categories ({totalLinksCount})
+              </button>
+              {SITEMAP_CATEGORIES.map(cat => {
+                const isSelected = selectedCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(isSelected ? 'all' : cat.id)}
+                    className={`px-3 py-1.5 rounded-full font-medium shrink-0 transition-all flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-accent text-white shadow-sm shadow-accent/20 font-bold'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
+                    }`}
+                  >
+                    <span className="font-mono font-bold opacity-80">{cat.code}.</span>
+                    <span>{cat.title.split('&')[0].trim()}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                      {cat.links.length}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {sitemapData.map((category) => (
-            <div 
-              key={category.title}
-              className="bg-white rounded-2xl p-6 sm:p-8 border border-dark/10 shadow-sm self-start"
+        {/* Results Counter if searching */}
+        {searchQuery && (
+          <div className="mb-6 px-2 flex items-center justify-between text-sm text-slate-600 bg-white p-4 rounded-2xl border border-slate-200">
+            <p>
+              Found <strong className="text-slate-900 font-bold">{totalMatchedLinks}</strong> matching pages for "{searchQuery}"
+            </p>
+            <button
+              onClick={() => setSearchQuery('')}
+              className="text-accent hover:underline font-bold text-xs"
             >
-              <h2 className="text-xl font-bold text-dark mb-6 pb-4 border-b border-dark/10">
-                {category.title}
-              </h2>
-              <ul className={`grid grid-cols-1 ${category.links.length > 20 ? 'sm:grid-cols-2' : ''} gap-x-8 gap-y-4`}>
-                {category.links.map((link) => (
-                  <li key={link.path + link.label}>
-                    <Link 
-                      to={link.path} 
-                      className="text-dark/80 hover:text-primary font-medium transition-colors flex items-start gap-3 group"
-                    >
-                      <span className="text-dark/40 font-mono text-sm mt-0.5 group-hover:text-primary transition-colors shrink-0">
-                        {getNextNumber()}.
-                      </span>
-                      <span className="leading-snug">{link.label}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              Reset Search Filter
+            </button>
+          </div>
+        )}
+
+        {/* Categories Listing */}
+        {filteredCategories.length === 0 ? (
+          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200">
+            <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8" />
             </div>
-          ))}
+            <h3 className="text-xl font-bold text-slate-900 mb-2">No matching pages found</h3>
+            <p className="text-slate-600 max-w-md mx-auto mb-6 text-sm">
+              We couldn't find any pages matching "{searchQuery}". Try a keyword like "Kumasi", "Towing", "Rentals", "Haulage", or an index like "A.1" or "#50".
+            </p>
+            <button
+              onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
+              className="px-5 py-2.5 bg-accent text-white font-bold rounded-xl text-sm hover:bg-accent/90 transition-colors"
+            >
+              Show All 338 Website Pages
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {filteredCategories.map((category) => {
+              const IconComponent = ICON_MAP[category.iconName] || MapPin;
+              const isExpanded = expandedSections[category.id] ?? true;
+              const range = categoryRanges[category.id];
+
+              return (
+                <section
+                  key={category.id}
+                  id={category.id}
+                  className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden transition-all duration-200"
+                >
+                  {/* Category Header with Clear Alphabetical & Numbered Heading */}
+                  <div 
+                    onClick={() => toggleSection(category.id)}
+                    className="p-5 sm:p-7 bg-slate-50/70 border-b border-slate-100 flex items-center justify-between cursor-pointer hover:bg-slate-100/60 transition-colors select-none"
+                  >
+                    <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-900 text-accent flex items-center justify-center shrink-0 shadow-sm">
+                        <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {/* Category Tag (A, B, C...) */}
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-mono font-black bg-accent text-white shadow-xs">
+                            Category {category.code}
+                          </span>
+                          
+                          <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+                            {category.title}
+                          </h2>
+
+                          {category.badge && (
+                            <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-accent/10 text-accent">
+                              {category.badge}
+                            </span>
+                          )}
+
+                          {/* Page Range Badge */}
+                          <span className="text-xs font-semibold text-slate-600 bg-white px-2.5 py-0.5 rounded-full border border-slate-200 font-mono">
+                            Pages #{range.start} – #{range.end} ({category.enrichedLinks.length} {category.enrichedLinks.length === 1 ? 'entry' : 'entries'})
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-1 line-clamp-1">
+                          {category.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button 
+                      className="text-slate-400 hover:text-slate-700 p-2 rounded-lg transition-colors shrink-0 ml-2"
+                      aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
+                    >
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Links Content */}
+                  {isExpanded && (
+                    <div className="p-5 sm:p-8">
+                      {viewMode === 'grid' ? (
+                        /* Card Grid View with Hierarchical and Sequential Numbering */
+                        <ul 
+                          className={`grid grid-cols-1 ${
+                            category.enrichedLinks.length > 20 
+                              ? 'md:grid-cols-2 lg:grid-cols-3' 
+                              : category.enrichedLinks.length > 6 
+                              ? 'md:grid-cols-2' 
+                              : 'grid-cols-1'
+                          } gap-3.5 sm:gap-4`}
+                        >
+                          {category.enrichedLinks.map((link) => (
+                            <li key={link.path + link.label + link.globalNumber}>
+                              <Link
+                                to={link.path}
+                                className="group block p-4 rounded-xl border border-slate-100 hover:border-accent/40 bg-white hover:bg-slate-50/90 transition-all duration-150 h-full flex flex-col justify-between shadow-xs hover:shadow-sm"
+                              >
+                                <div>
+                                  {/* Entry Identification Header: Hierarchy Code & Global Number */}
+                                  <div className="flex items-center justify-between gap-2 mb-2">
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-900 text-accent font-mono font-bold text-xs">
+                                        {link.hierarchicalId}
+                                      </span>
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[11px]">
+                                        #{link.globalNumber}
+                                      </span>
+                                    </div>
+                                    <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                                  </div>
+
+                                  {/* Page Title */}
+                                  <h3 className="font-bold text-sm sm:text-[15px] text-slate-900 group-hover:text-accent transition-colors leading-snug">
+                                    {link.label}
+                                  </h3>
+                                  
+                                  {/* Page Description */}
+                                  {link.desc && (
+                                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mt-1.5">
+                                      {link.desc}
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* URL Path and Visit CTA */}
+                                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                                  <span className="font-mono text-slate-400 group-hover:text-slate-600 transition-colors truncate max-w-[200px]">
+                                    {link.path}
+                                  </span>
+                                  <span className="text-accent font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                                    Open &rarr;
+                                  </span>
+                                </div>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        /* Compact Numbered Table View */
+                        <div className="overflow-x-auto rounded-xl border border-slate-200">
+                          <table className="w-full text-left border-collapse text-sm">
+                            <thead>
+                              <tr className="bg-slate-100/80 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                                <th className="py-3 px-3 w-16 text-center">Code</th>
+                                <th className="py-3 px-3 w-16 text-center">No.</th>
+                                <th className="py-3 px-4">Page Title & Description</th>
+                                <th className="py-3 px-4 hidden md:table-cell">URL Route</th>
+                                <th className="py-3 px-3 text-right">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                              {category.enrichedLinks.map((link) => (
+                                <tr 
+                                  key={link.path + link.label + link.globalNumber}
+                                  className="hover:bg-slate-50/80 transition-colors group"
+                                >
+                                  <td className="py-3 px-3 text-center">
+                                    <span className="inline-block px-2 py-0.5 rounded bg-slate-900 text-accent font-mono font-bold text-xs">
+                                      {link.hierarchicalId}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
+                                    #{link.globalNumber}
+                                  </td>
+                                  <td className="py-3 px-4">
+                                    <Link 
+                                      to={link.path}
+                                      className="font-bold text-slate-900 group-hover:text-accent transition-colors block text-sm"
+                                    >
+                                      {link.label}
+                                    </Link>
+                                    {link.desc && (
+                                      <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                                        {link.desc}
+                                      </p>
+                                    )}
+                                  </td>
+                                  <td className="py-3 px-4 hidden md:table-cell font-mono text-xs text-slate-400 group-hover:text-slate-600">
+                                    {link.path}
+                                  </td>
+                                  <td className="py-3 px-3 text-right">
+                                    <Link
+                                      to={link.path}
+                                      className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 group-hover:bg-accent group-hover:text-white text-slate-700 transition-all"
+                                    >
+                                      <span>Visit</span>
+                                      <ArrowUpRight className="w-3 h-3" />
+                                    </Link>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Quick Dispatch Call-to-Action Footer Banner */}
+        <div className="mt-12 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 text-center max-w-4xl mx-auto shadow-sm">
+          <h3 className="text-lg font-bold text-slate-900 mb-2">Need Immediate Roadside or Heavy Haulage Dispatch?</h3>
+          <p className="text-sm text-slate-600 mb-5 max-w-2xl mx-auto">
+            Our 24/7 dispatch control center is on standby across Greater Accra, Ashanti, Western, Central, Eastern, and all 16 regions of Ghana.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <a 
+              href="tel:0244753849" 
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent text-white font-bold text-sm hover:bg-accent/90 transition-all shadow-md shadow-accent/20"
+            >
+              <Truck className="w-4 h-4" />
+              <span>Call Emergency Hotline: 0244753849</span>
+            </a>
+            <Link 
+              to="/contact" 
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition-all"
+            >
+              <span>Contact Dispatch Center</span>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

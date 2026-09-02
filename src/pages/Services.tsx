@@ -16,48 +16,55 @@ const CORE_SERVICES = [
   },
   { 
     id: 2, 
+    title: 'Haulage & Heavy Transport', 
+    desc: 'Professional haulage of heavy construction machinery, forklifts, generators, shipping containers, and oversized freight across Ghana.', 
+    icon: Truck, 
+    image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=800&q=80' 
+  },
+  { 
+    id: 3, 
     title: 'Vehicle Recovery', 
     desc: 'Expert off-road and accident recovery using specialized equipment to handle any complex situation.', 
     icon: Shield, 
     image: 'https://i.ibb.co/gZh5x06r/Image-1-Towing-Vehicle.jpg' 
   },
   { 
-    id: 3, 
+    id: 4, 
     title: 'Car Rental', 
     desc: 'Premium and affordable rental vehicles for daily, weekly, or monthly use, tailored to your needs.', 
     icon: Car, 
     image: 'https://i.ibb.co/zVkLKHdN/Image-2-A-SUV-KIA-Sportage-2024-Ratio.png' 
   },
   { 
-    id: 4, 
+    id: 5, 
     title: 'Vehicle Sales', 
     desc: 'Quality inspected new and pre-owned vehicles. Find your next car with our trusted sales team.', 
     icon: Car, 
     image: 'https://i.ibb.co/KcZkH37Y/Image-3-Sedan-Toyotta-Corolla.jpg' 
   },
   { 
-    id: 5, 
+    id: 6, 
     title: 'Auto Repairs', 
     desc: 'Comprehensive mechanical repairs, computer diagnostics, and regular maintenance by certified mechanics.', 
     icon: Wrench, 
     image: 'https://i.ibb.co/WpNkptMZ/Image-4-Van-Hyundai-H1-2022.jpg' 
   },
   { 
-    id: 6, 
+    id: 7, 
     title: 'Body Works & Spray Painting', 
     desc: 'Professional dent repair, collision restoration, and premium oven-baked spray painting services.', 
     icon: ShieldCheck, 
     image: 'https://i.ibb.co/Mx8G6vHw/Image-5-Economy-Nissan-Almera-2021.jpg' 
   },
   { 
-    id: 7, 
+    id: 8, 
     title: 'Auto Parts & Batteries', 
     desc: 'Genuine OEM replacement parts, premium batteries, and quality automotive accessories.', 
     icon: Battery, 
     image: 'https://i.ibb.co/DH19ffJd/Image-6-Luxury-Mercedes-Benz.jpg' 
   },
   { 
-    id: 8, 
+    id: 9, 
     title: 'Fleet Services', 
     desc: 'Dedicated commercial fleet maintenance, tracking, and priority repair solutions for businesses.', 
     icon: Settings, 
@@ -143,7 +150,15 @@ export default function Services() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {CORE_SERVICES.map((service, idx) => {
               const Icon = service.icon;
-              const servicePath = service.title === 'Emergency Towing' ? '/towing' : service.title === 'Car Rental' ? '/rental' : service.title === 'Vehicle Sales' ? '/sales' : service.title === 'Auto Repairs' ? '/repairs' : service.title === 'Body Works' ? '/body-works' : service.title === 'Auto Parts & Batteries' ? '/parts' : service.title === 'Fleet Services' ? '/fleet' : '/services';
+              const servicePath = service.title === 'Emergency Towing' ? '/towing' 
+                : service.title === 'Haulage & Heavy Transport' ? '/haulage'
+                : service.title === 'Car Rental' ? '/rental' 
+                : service.title === 'Vehicle Sales' ? '/sales' 
+                : service.title === 'Auto Repairs' ? '/repairs' 
+                : service.title === 'Body Works & Spray Painting' ? '/body-works' 
+                : service.title === 'Auto Parts & Batteries' ? '/parts' 
+                : service.title === 'Fleet Services' ? '/fleet' 
+                : '/services';
               return (
                 <motion.div
                   key={service.id}

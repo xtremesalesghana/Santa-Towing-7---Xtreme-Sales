@@ -69,7 +69,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm">
               {[
                 { name: 'Home', path: '/' },
-                { name: 'About Us', path: '/#about' },
+                { name: 'Haulage Services', path: '/haulage' },
                 { name: '24/7 Emergency Towing', path: '/towing' },
                 { name: 'Service Areas Directory', path: '/service-areas' },
                 { name: 'Auto Repair & Maintenance', path: '/repairs' },
@@ -99,13 +99,14 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm">
               {[
+                { name: 'Haulage & Heavy Transport', path: '/haulage' },
+                { name: 'Tema Harbour Haulage', path: '/haulage' },
+                { name: 'Heavy Machinery Transport', path: '/haulage' },
                 { name: 'Emergency Roadside Towing', path: '/towing' },
                 { name: 'Heavy Duty Recovery', path: '/towing' },
-                { name: 'Accident Removal', path: '/towing' },
                 { name: 'Fleet Maintenance', path: '/fleet' },
                 { name: 'Engine & Gearbox Repairs', path: '/repairs' },
                 { name: 'Brake & Suspension Service', path: '/repairs' },
-                { name: 'Computer Diagnostics', path: '/repairs' },
                 { name: 'Corporate Car Rentals', path: '/rental' },
                 { name: 'OEM Battery Replacement', path: '/parts' }
               ].map(item => (

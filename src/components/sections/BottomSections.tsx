@@ -181,7 +181,7 @@ export function BlogSection() {
                   {post.excerpt}
                 </p>
                 <Link 
-                  to="/blog" 
+                  to={`/blog/${post.id}`}
                   className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-primary group-hover:text-accent transition-colors pt-4 border-t border-gray-100 group/link"
                 >
                   <span>Read Full Article</span> 

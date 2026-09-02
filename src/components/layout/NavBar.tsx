@@ -78,7 +78,7 @@ export default function NavBar() {
         </Link>
 
         {/* Desktop Nav (Large Screens) */}
-        <nav className="hidden xl:flex items-center gap-7 font-medium text-sm">
+        <nav className="hidden xl:flex items-center gap-6 font-medium text-sm">
           <Link to="/" className="hover:text-accent transition-colors">Home</Link>
           
           <div className="relative group cursor-pointer">
@@ -97,6 +97,10 @@ export default function NavBar() {
               ))}
             </div>
           </div>
+
+          <Link to="/haulage" className="hover:text-accent transition-colors font-semibold flex items-center gap-1">
+            Haulage Services
+          </Link>
 
           <div className="relative group cursor-pointer">
             <Link to="/services" className="flex items-center gap-1 hover:text-accent transition-colors py-2">
@@ -124,12 +128,12 @@ export default function NavBar() {
         </nav>
 
         {/* Medium Nav (Tablet/Laptop) */}
-        <nav className="hidden lg:flex xl:hidden items-center gap-5 font-medium text-sm">
+        <nav className="hidden lg:flex xl:hidden items-center gap-4 font-medium text-sm">
           <Link to="/" className="hover:text-accent transition-colors">Home</Link>
           
           <div className="relative group cursor-pointer">
             <span className="flex items-center gap-1 hover:text-accent transition-colors py-2">
-              Towing Services <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
+              Towing <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
             </span>
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-52 bg-white text-dark rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden border border-gray-100 p-1.5 z-50">
               {towingServices.map(s => (
@@ -144,9 +148,11 @@ export default function NavBar() {
             </div>
           </div>
 
+          <Link to="/haulage" className="hover:text-accent transition-colors font-semibold">Haulage</Link>
+
           <div className="relative group cursor-pointer">
             <Link to="/services" className="flex items-center gap-1 hover:text-accent transition-colors py-2">
-              Other Services <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
+              Services <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-200" />
             </Link>
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-52 bg-white text-dark rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden border border-gray-100 p-1.5 z-50">
               {services.map(s => (
@@ -225,6 +231,16 @@ export default function NavBar() {
               <Link to="/search" onClick={() => setMobileMenuOpen(false)} className="py-3 px-4 hover:text-accent hover:bg-slate-50 rounded-lg transition-colors shrink-0 flex items-center gap-2">
                 <SearchIcon className="w-4 h-4" />
                 <span>Search</span>
+              </Link>
+
+              {/* Haulage Services Direct Mobile Link */}
+              <Link 
+                to="/haulage" 
+                onClick={() => setMobileMenuOpen(false)} 
+                className="py-3 px-4 hover:text-accent hover:bg-slate-50 rounded-lg transition-colors shrink-0 flex items-center justify-between font-bold text-accent"
+              >
+                <span>Haulage Services</span>
+                <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded font-bold uppercase">Heavy Transport</span>
               </Link>
               
               {/* Towing Services Accordion */}
